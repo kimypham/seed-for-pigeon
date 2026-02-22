@@ -20,19 +20,19 @@ expand_mode = 2
 
 [node name="SeedTimer" type="Timer" parent="."]
 
-[node name="ScoreTimer" type="Timer" parent="."]
+[node name="RoundTimer" type="Timer" parent="."]
 
 [node name="StartTimer" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
 
 [node name="StartPosition" type="Marker2D" parent="."]
-position = Vector2(240, 450)
+position = Vector2(576, 320)
 
 [node name="HUD" parent="." instance=ExtResource("4_1bvp3")]
 
 [connection signal="eat" from="Pigeon" to="." method="_on_pigeon_eat"]
 [connection signal="timeout" from="SeedTimer" to="." method="_on_seed_timer_timeout"]
-[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="RoundTimer" to="." method="_on_round_timer_timeout"]
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
 [connection signal="start_game" from="HUD" to="." method="new_game"]

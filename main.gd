@@ -1,7 +1,11 @@
 extends Node
 
 @export var seed_scene: PackedScene
+@onready var pigeon = $Pigeon
+
 var score
+var round_length
+var starting_round_length = 5
 
 func _ready():
 	#new_game()
@@ -14,17 +18,27 @@ func _on_pigeon_eat(seed) -> void:
 	$HUD.update_score(score)
 
 func game_over():
-	$ScoreTimer.stop()
+	$RoundTimer.stop()
 	$SeedTimer.stop()
+	$HUD.update_your_score_label(score)
 	$HUD.show_game_over()
-
+	pigeon.hide()
+	for child in get_children():
+		if child is RigidBody2D:
+			child.queue_free()
+	
 func new_game():
 	score = 0
+	round_length = starting_round_length
+	pigeon.show()
 	$Pigeon.start($StartPosition.position)
 	$StartTimer.start()
 	
+	$HUD.update_round_length(round_length)
 	$HUD.update_score(score)
-	$HUD.show_message("Get Ready")
+	$HUD.show_message("Get Ready...")
+	await get_tree().create_timer(1.0).timeout
+	$HUD.show_message("Go!")
 	
 func _on_seed_timer_timeout() -> void:
 	var seed_instance = seed_scene.instantiate()
@@ -49,16 +63,16 @@ func _on_seed_timer_timeout() -> void:
 	seed_instance.setup(start, target)
 	seed_instance.landed.connect(_on_seed_landed)
 
-
-func _on_score_timer_timeout() -> void:
-	pass # Replace with function body.
-
+func _on_round_timer_timeout() -> void:
+	round_length -= 1
+	$HUD.update_round_length(round_length)
+	if round_length <= 0:
+		game_over()
 
 func _on_start_timer_timeout():
 	$SeedTimer.start()
-	$ScoreTimer.start()
+	$RoundTimer.start()
 
 func _on_seed_landed(seed):
-	var pigeon = $Pigeon
 	if pigeon.position.distance_to(seed.position) < 75:  # adjust radius as needed
 		pigeon.eat.emit(seed)

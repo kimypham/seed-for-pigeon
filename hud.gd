@@ -10,6 +10,10 @@ func show_message(text):
 	
 func show_game_over():
 	show_message("Game Over")
+	$YourScoreLabel.show()
+	$ScoreLabel.hide()
+	$RoundLengthLabel.hide()
+	
 	# Wait until the MessageTimer has counted down.
 	await $MessageTimer.timeout
 
@@ -21,10 +25,19 @@ func show_game_over():
 	
 func update_score(score):
 	$ScoreLabel.text = "Score: " + str(score)
+
+func update_your_score_label(score):
+	$YourScoreLabel.text = "Your score was: " + str(score)
+	
+func update_round_length(round_length):
+	$RoundLengthLabel.text = str(round_length)
 	
 func _on_start_button_pressed():
 	$StartButton.hide()
+	$YourScoreLabel.hide()
 	start_game.emit()
+	$ScoreLabel.show()
+	$RoundLengthLabel.show()
 
 func _on_message_timer_timeout():
 	$Message.hide()
