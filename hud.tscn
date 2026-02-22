@@ -56,7 +56,6 @@ wait_time = 2.0
 one_shot = true
 
 [node name="RoundLengthLabel" type="Label" parent="."]
-visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5

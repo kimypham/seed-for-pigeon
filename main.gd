@@ -2,6 +2,7 @@ extends Node
 
 @export var seed_scene: PackedScene
 
+var game_active = false
 var current_highscore
 var score
 var round_length
@@ -17,19 +18,22 @@ func _ready():
 	pass
 
 func _on_pigeon_eat(seed) -> void:
+	var is_rainbow = seed.is_rainbow
 	var points = seed.eaten()
 	score += points
 	print("Score: ", score)
 	$HUD.update_score(score)
-	var is_rainbow = seed.is_rainbow
 	if is_rainbow:
 		seed_shower()
+		$HUD.show_rainbow_seed_shower_label()
 
 func game_over():
+	game_active = false
 	$RoundTimer.stop()
 	$SeedTimer.stop()
 	$HUD.update_your_score_label(score)
 	$HUD.show_game_over()
+	$HUD.hide_rainbow_label()
 	$Pigeon.hide()
 	for child in get_children():
 		if child is RigidBody2D:
@@ -41,6 +45,7 @@ func game_over():
 		save_highscore(score)
 	
 func new_game():
+	game_active = true
 	score = 0
 	round_length = STARTING_ROUND_LENGTH
 	$Pigeon.show()
@@ -111,6 +116,8 @@ func load_highscore() -> int:
 func seed_shower():
 	for i in range(MAX_SEEDS_IN_SHOWER):  # how many seeds in the shower
 		await get_tree().create_timer(0.1).timeout  # delay between each seed
+		if not game_active:  # stop spawning if game over
+			return
 		var seed_instance = seed_scene.instantiate()
 		var screen_size = get_viewport().get_visible_rect().size
 		

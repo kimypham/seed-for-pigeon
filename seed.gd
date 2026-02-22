@@ -16,6 +16,7 @@ var final_rotation = 0.0
 
 var is_rainbow = false
 var rainbow_elapsed = 0.0
+const RAINBOW_SEED_POINTS = 0
 
 func set_rainbow():
 	is_rainbow = true
@@ -86,5 +87,7 @@ func _process(delta):
 			queue_free()
 
 func eaten():
+	if not is_instance_valid(self):
+		return
 	queue_free()
-	return 2 if is_rainbow else 1
+	return RAINBOW_SEED_POINTS if is_rainbow else 1
