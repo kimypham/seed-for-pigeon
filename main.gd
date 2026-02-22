@@ -1,14 +1,17 @@
 extends Node
 
 @export var seed_scene: PackedScene
-@onready var pigeon = $Pigeon
 
+var current_highscore
 var score
 var round_length
-var starting_round_length = 5
+
+const STARTING_ROUND_LENGTH = 30
+const SAVE_PATH = "user://highscore.bin"
 
 func _ready():
-	#new_game()
+	current_highscore = load_highscore()
+	$HUD.update_highscore_label(current_highscore)
 	pass
 
 func _on_pigeon_eat(seed) -> void:
@@ -22,15 +25,20 @@ func game_over():
 	$SeedTimer.stop()
 	$HUD.update_your_score_label(score)
 	$HUD.show_game_over()
-	pigeon.hide()
+	$Pigeon.hide()
 	for child in get_children():
 		if child is RigidBody2D:
 			child.queue_free()
+			
+	current_highscore = load_highscore()
+	if score > current_highscore:
+		$HUD.update_highscore_label(score)
+		save_highscore(score)
 	
 func new_game():
 	score = 0
-	round_length = starting_round_length
-	pigeon.show()
+	round_length = STARTING_ROUND_LENGTH
+	$Pigeon.show()
 	$Pigeon.start($StartPosition.position)
 	$StartTimer.start()
 	
@@ -74,5 +82,20 @@ func _on_start_timer_timeout():
 	$RoundTimer.start()
 
 func _on_seed_landed(seed):
-	if pigeon.position.distance_to(seed.position) < 75:  # adjust radius as needed
-		pigeon.eat.emit(seed)
+	if $Pigeon.position.distance_to(seed.position) < 75:  # adjust radius as needed
+		$Pigeon.eat.emit(seed)
+
+func save_highscore(highscore: int) -> void:
+	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if file:
+		file.store_64(highscore)
+	else:
+		push_warning("Couldn't save highscore file: ", error_string(FileAccess.get_open_error()))
+
+func load_highscore() -> int:
+	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if file:
+		return file.get_64()
+	else:
+		push_warning("Couldn't load highscore file: ", error_string(FileAccess.get_open_error()))
+		return -1

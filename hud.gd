@@ -11,6 +11,7 @@ func show_message(text):
 func show_game_over():
 	show_message("Game Over")
 	$YourScoreLabel.show()
+	$HighscoreLabel.show()
 	$ScoreLabel.hide()
 	$RoundLengthLabel.hide()
 	
@@ -29,12 +30,16 @@ func update_score(score):
 func update_your_score_label(score):
 	$YourScoreLabel.text = "Your score was: " + str(score)
 	
+func update_highscore_label(score):
+	$HighscoreLabel.text = "Highscore: " + str(score)
+
 func update_round_length(round_length):
 	$RoundLengthLabel.text = str(round_length)
 	
 func _on_start_button_pressed():
 	$StartButton.hide()
 	$YourScoreLabel.hide()
+	$HighscoreLabel.hide()
 	start_game.emit()
 	$ScoreLabel.show()
 	$RoundLengthLabel.show()
