@@ -20,21 +20,16 @@ func _process(delta):
 		velocity.y -= 1
 
 	if velocity.length() > 0:
+		$AnimatedSprite2D.animation = "walk"
 		velocity = velocity.normalized() * speed
+		rotation = lerp_angle(rotation, atan2(velocity.x, -velocity.y), delta * 10.0)
 		$AnimatedSprite2D.play()
 	else:
+		$AnimatedSprite2D.animation = "idle"
 		$AnimatedSprite2D.stop()
 	
 	position += velocity * delta
 	position = position.clamp(Vector2.ZERO, screen_size)
-	
-	#var target_angle = velocity.angle()
-	#rotation = lerp_angle(rotation, target_angle, 0.1)
-	if velocity.length() > 0:
-		rotation = lerp_angle(rotation, atan2(velocity.x, -velocity.y), delta * 10.0)
-		$AnimatedSprite2D.play()
-	else:
-		$AnimatedSprite2D.stop()
 	
 func start(pos):
 	position = pos
