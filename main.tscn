@@ -19,7 +19,6 @@ expand_mode = 2
 [node name="Pigeon" parent="." instance=ExtResource("1_ig7tw")]
 
 [node name="SeedTimer" type="Timer" parent="."]
-wait_time = 0.05
 
 [node name="ScoreTimer" type="Timer" parent="."]
 

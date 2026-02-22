@@ -65,6 +65,15 @@ func _process(delta):
 		freeze = false
 		shadow.hide()
 		landed.emit(self)
+		await get_tree().create_timer(5.0).timeout
+		if is_instance_valid(self):  # make sure it wasn't already eaten
+			var fade_time = 0.5
+			var fade_elapsed = 0.0
+			while fade_elapsed < fade_time:
+				fade_elapsed += get_process_delta_time()
+				modulate.a = lerp(1.0, 0.0, fade_elapsed / fade_time)
+				await get_tree().process_frame
+			queue_free()
 
 func eaten():
 	queue_free()
