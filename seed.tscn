@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7uibdl74gq2t"]
+
+[ext_resource type="Script" uid="uid://kqo1pygbu8g3" path="res://seed.gd" id="1_24r2x"]
+[ext_resource type="Texture2D" uid="uid://clqfm3taenyt3" path="res://art/seed.png" id="1_a1cqr"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_a1cqr"]
+radius = 5.0
+height = 14.0
+
+[node name="Seed" type="RigidBody2D"]
+collision_mask = 0
+gravity_scale = 0.0
+script = ExtResource("1_24r2x")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_a1cqr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_a1cqr")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[connection signal="landed" from="." to="." method="_on_landed"]

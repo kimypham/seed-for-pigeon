@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://xd7fhpq0un05"]
+
+[ext_resource type="Texture2D" uid="uid://c03momr4d45o3" path="res://art/pigeon1.png" id="1_p3npc"]
+[ext_resource type="Script" uid="uid://b5l247qljkx6i" path="res://pigeon.gd" id="1_vw3md"]
+[ext_resource type="Texture2D" uid="uid://dcpeqbsdgupb4" path="res://art/pigeon2.png" id="2_vw3md"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h26hx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_p3npc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_vw3md")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_p3npc"]
+radius = 98.0
+height = 308.0
+
+[node name="Pigeon" type="Area2D"]
+scale = Vector2(0.5, 0.5)
+script = ExtResource("1_vw3md")
+speed = 300
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_h26hx")
+animation = &"walk"
+frame_progress = 0.0415168
+speed_scale = 1.5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_p3npc")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
