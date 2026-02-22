@@ -1,3 +1,4 @@
+# Music by <a href="https://pixabay.com/users/harumachimusic-13470593/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=170322">Noru</a> from <a href="https://pixabay.com/music//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=170322">Pixabay</a>
 extends Node
 
 @export var seed_scene: PackedScene
@@ -20,15 +21,20 @@ func _ready():
 func _on_pigeon_eat(seed) -> void:
 	var is_rainbow = seed.is_rainbow
 	var points = seed.eaten()
+	#$EatSound.play()
 	score += points
 	print("Score: ", score)
 	$HUD.update_score(score)
 	if is_rainbow:
 		seed_shower()
 		$HUD.show_rainbow_seed_shower_label()
+		$RainbowEatSound.play()
+	else:
+		$EatSound.play()
 
 func game_over():
 	game_active = false
+	$Music.stop()
 	$RoundTimer.stop()
 	$SeedTimer.stop()
 	$HUD.update_your_score_label(score)
@@ -46,6 +52,7 @@ func game_over():
 	
 func new_game():
 	game_active = true
+	$Music.play()
 	score = 0
 	round_length = STARTING_ROUND_LENGTH
 	$Pigeon.show()
