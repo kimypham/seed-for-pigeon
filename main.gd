@@ -7,6 +7,8 @@ var score
 var round_length
 
 const STARTING_ROUND_LENGTH = 30
+const MAX_SEEDS_IN_SHOWER = 20
+const RAINBOW_SEED_CHANCE = 0.1
 const SAVE_PATH = "user://highscore.bin"
 
 func _ready():
@@ -15,10 +17,13 @@ func _ready():
 	pass
 
 func _on_pigeon_eat(seed) -> void:
-	seed.eaten()
-	score += 1
+	var points = seed.eaten()
+	score += points
 	print("Score: ", score)
 	$HUD.update_score(score)
+	var is_rainbow = seed.is_rainbow
+	if is_rainbow:
+		seed_shower()
 
 func game_over():
 	$RoundTimer.stop()
@@ -69,6 +74,9 @@ func _on_seed_timer_timeout() -> void:
 	
 	add_child(seed_instance)
 	seed_instance.setup(start, target)
+	# 10% chance of rainbow seed
+	if randf() < RAINBOW_SEED_CHANCE:
+		seed_instance.set_rainbow()
 	seed_instance.landed.connect(_on_seed_landed)
 
 func _on_round_timer_timeout() -> void:
@@ -99,3 +107,24 @@ func load_highscore() -> int:
 	else:
 		push_warning("Couldn't load highscore file: ", error_string(FileAccess.get_open_error()))
 		return -1
+		
+func seed_shower():
+	for i in range(MAX_SEEDS_IN_SHOWER):  # how many seeds in the shower
+		await get_tree().create_timer(0.1).timeout  # delay between each seed
+		var seed_instance = seed_scene.instantiate()
+		var screen_size = get_viewport().get_visible_rect().size
+		
+		var target = Vector2(
+			randf_range(50, screen_size.x - 50),
+			randf_range(50, screen_size.y - 50)
+		)
+		
+		var edge = randi() % 2
+		var start = Vector2.ZERO
+		match edge:
+			0: start = Vector2(-20, randf_range(0, screen_size.y))
+			1: start = Vector2(screen_size.x + 20, randf_range(0, screen_size.y))
+		
+		add_child(seed_instance)
+		seed_instance.setup(start, target)
+		seed_instance.landed.connect(_on_seed_landed)

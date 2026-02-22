@@ -14,6 +14,12 @@ var control_point: Vector2
 var spin_speed = 0.0
 var final_rotation = 0.0
 
+var is_rainbow = false
+var rainbow_elapsed = 0.0
+
+func set_rainbow():
+	is_rainbow = true
+
 func _ready():
 	scale = Vector2(0.2, 0.2)
 	freeze = true
@@ -44,6 +50,10 @@ func quadratic_bezier(a: Vector2, b: Vector2, c: Vector2, t: float) -> Vector2:
 	return a.lerp(b, t).lerp(b.lerp(c, t), t)
 
 func _process(delta):
+	if is_rainbow:
+			rainbow_elapsed += delta
+			# Cycle through hues over time
+			$Sprite2D.modulate = Color.from_hsv(fmod(rainbow_elapsed * 0.8, 1.0), 0.7, 1.0)
 	if not landing:
 		return
 	
@@ -77,3 +87,4 @@ func _process(delta):
 
 func eaten():
 	queue_free()
+	return 2 if is_rainbow else 1
